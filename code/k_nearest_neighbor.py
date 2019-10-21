@@ -1,8 +1,9 @@
-import numpy as np 
+import numpy as np
+from statistics import mode
 from .distances import euclidean_distances, manhattan_distances, cosine_distances
 
-class KNearestNeighbor():    
-    def __init__(self, n_neighbors, distance_measure='euclidean', aggregator='mode'):
+class KNearestNeighbor():
+    def __init__(self, n_neighbors, distance_measure='euclidean', aggregator='mode', features = None, targets = None):
         """
         K-Nearest Neighbor is a straightforward algorithm that can be highly
         effective. Training time is...well...is there any training? At test time, labels for
@@ -42,11 +43,18 @@ class KNearestNeighbor():
                 neighbors. Can be one of 'mode', 'mean', or 'median'.
         """
         self.n_neighbors = n_neighbors
+        self.distance_measure = distance_measure
+        self.aggregator = aggregator
+        self.features = features
+        self.targets = targets
 
-        raise NotImplementedError()
+
+        #raise NotImplementedError()
 
 
     def fit(self, features, targets):
+        self.features = features
+        self.targets = targets
         """Fit features, a numpy array of size (n_samples, n_features). For a KNN, this
         function should store the features and corresponding targets in class 
         variables that can be accessed in the `predict` function. Note that targets can
@@ -62,10 +70,44 @@ class KNearestNeighbor():
                 n_dimensions).
         """
 
-        raise NotImplementedError()
+        #raise NotImplementedError()
         
 
     def predict(self, features, ignore_first=False):
+        if(self.distance_measure == 'euclidean'):
+            distances = euclidean_distances(features, self.features)
+        elif(self.distance_measure == 'manhattan'):
+            distances = manhattan_distances(features, self.features)
+        elif(self.distance_measure == 'cosine'):
+            distances = cosine_distances(features, self.features)
+
+
+        labels = np.zeros((np.size(features, 0), np.size(self.targets, 1)))
+
+        for i in range(np.size(distances, 0)):
+
+            if(ignore_first):
+                closestN = np.argsort(distances[i, :])[1:self.n_neighbors+1]
+            else:
+                closestN =  np.argsort(distances[i, :])[:self.n_neighbors]
+
+            targets = self.targets[closestN, :]
+            if(self.aggregator == 'mode'):
+                modes = np.zeros(np.size(targets,1))
+                for j in range(np.size(targets, 1)):
+                   modes[j] = mode(targets[:, j])
+                labels[i,:] = modes
+            elif(self.aggregator == 'mean'):
+                labels[i, :] = np.mean(targets, axis=0)
+            elif(self.aggregator == 'median'):
+                labels[i, :] = np.median(targets, axis =0)
+
+        return labels
+
+
+
+
+
         """Predict from features, a numpy array of size (n_samples, n_features) Use the
         training data to predict labels on the test features. For each testing sample, compare it
         to the training samples. Look at the self.n_neighbors closest samples to the 
@@ -87,4 +129,4 @@ class KNearestNeighbor():
             labels {np.ndarray} -- Labels for each data point, of shape (n_samples,
                 n_features)
         """
-        raise NotImplementedError()
+        #raise NotImplementedError()

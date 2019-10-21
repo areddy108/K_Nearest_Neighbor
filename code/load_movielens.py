@@ -3,6 +3,7 @@ import numpy as np
 import os
 
 def load_movielens_data(data_folder_path):
+
     """
     The MovieLens dataset is contained at data/ml-100k.zip. This function reads the
     unzipped content of the MovieLens dataset into a numpy array. The file to read in
@@ -28,5 +29,13 @@ def load_movielens_data(data_folder_path):
     """
     # This is the path to the file you need to load.
     data_file = os.path.join(data_folder_path, 'u.data')
+    originalData = np.genfromtxt(data_file)
+    data = np.zeros((943, 1682))
 
-    raise NotImplementedError()
+    for i in range(np.size(originalData, 0)):
+        data[int(originalData[i, 0])- 1, int(originalData[i, 1]) - 1] = originalData[i, 2]
+        #print(data[])
+
+    return data
+
+    #raise NotImplementedError()

@@ -4,6 +4,22 @@ from .k_nearest_neighbor import KNearestNeighbor
 
 def collaborative_filtering(input_array, n_neighbors,
                             distance_measure='euclidean', aggregator='mode'):
+
+
+    kn =  KNearestNeighbor(n_neighbors, distance_measure, aggregator)
+    imputed_array = input_array.copy()
+    for i in range(np.size(input_array, 0)):
+        zeros = np.where(input_array[i, : ] == 0)
+        targets = input_array[:, zeros].squeeze(axis = 2)
+        kn.fit(input_array, targets)
+        predictions = kn.predict(input_array[i, :], ignore_first= True)
+        for j in range(np.size(zeros)):
+            imputed_array[i, zeros[j] ] = predictions[j]
+
+    return imputed_array
+
+
+
     """
     This is a wrapper function for your KNearestNeighbors class, that runs kNN
     as a collaborative filter.
@@ -63,4 +79,4 @@ def collaborative_filtering(input_array, n_neighbors,
         imputed_array {np.ndarray} -- An array of shape (n_samples, n_features) with imputed
             values for any zeros in the original input_array.
     """
-    raise NotImplementedError()
+    #raise NotImplementedError

@@ -1,7 +1,13 @@
 {
-    "score": 0,
-    "tests_passed": 0,
+    "score": 100,
+    "tests_passed": 7,
     "notes": {
-        "test_netid": "FAIL - REQUIRED (automatic zero)"
+        "test_k_nearest_neighbor": "PASS",
+        "test_collaborative_filtering": "PASS",
+        "test_euclidean_distances": "PASS",
+        "test_manhattan_distances": "PASS",
+        "test_cosine_distances": "PASS",
+        "test_aggregators": "PASS",
+        "test_load_movielens_data": "PASS"
     }
 }
